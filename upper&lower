@@ -1,0 +1,6 @@
+# Update your code below this line
+mixed_string = 'Am I DreAmIng'
+result=mixed_string.lower()
+print(result)
+result=mixed_string.upper()
+print(result)
