@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+int countStudents(int* students, int studentsSize, int* sandwiches, int sandwichesSize) {
+    // Array to store counts of student preferences: counts[0] for circular, counts[1] for square
+    int counts[2] = {0, 0};
+    
+    // Count total number of student preferences
+    for (int i = 0; i < studentsSize; i++) {
+        counts[students[i]]++;
+    }
+    
+    // Process the sandwiches stack from top to bottom
+    for (int i = 0; i < sandwichesSize; i++) {
+        int current_sandwich = sandwiches[i];
+        
+        // If there's a student who wants this sandwich, they take it
+        if (counts[current_sandwich] > 0) {
+            counts[current_sandwich]--;
+        } else {
+            // No student left wants this type of sandwich; queue stalls completely
+            return sandwichesSize - i;
+        }
+    }
+    
+    // All students successfully got a sandwich
+    return 0;
+}
