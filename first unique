@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <string.h>
+
+int firstUniqChar(char* s) {
+    int count[26] = {0};
+    int len = strlen(s);
+
+    // Step 1: Populating the frequency array
+    for (int i = 0; i < len; i++) {
+        count[s[i] - 'a']++;
+    }
+
+    // Step 2: Finding the first character with a count of 1
+    for (int i = 0; i < len; i++) {
+        if (count[s[i] - 'a'] == 1) {
+            return i;
+        }
+    }
+    return -1;
+}
