@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* simplifyPath(char* path) {
+    int len = strlen(path);
+    
+    // Allocate space for the stack of directory names
+    // In the worst-case, there could be at most len/2 directories
+    char** stack = (char**)malloc(len * sizeof(char*));
+    int top = 0;
+    
+    // Create a mutable copy of the path because strtok modifies the input string
+    char* pathCopy = (char*)malloc((len + 1) * sizeof(char));
+    strcpy(pathCopy, path);
+    
+    // Tokenize the path string using the slash '/' as a delimiter
+    char* token = strtok(pathCopy, "/");
+    while (token != NULL) {
+        if (strcmp(token, ".") == 0) {
+            // "." means current directory, do nothing
+        } else if (strcmp(token, "..") == 0) {
+            // ".." means go up a level, pop from stack if not empty
+            if (top > 0) {
+                top--;
+            }
+        } else if (strlen(token) > 0) {
+            // Push valid directory name onto the stack
+            stack[top++] = token;
+        }
+        token = strtok(NULL, "/");
+    }
+    
+    // Allocate space for the final canonical output string
+    char* result = (char*)malloc((len + 2) * sizeof(char));
+    result[0] = '\0';
+    
+    // Build the path string by concatenating from the stack
+    if (top == 0) {
+        strcpy(result, "/");
+    } else {
+        for (int i = 0; i < top; i++) {
+            strcat(result, "/");
+            strcat(result, stack[i]);
+        }
+    }
+    
+    // Clean up auxiliary memory allocation
+    free(pathCopy);
+    free(stack);
+    
+    return result;
+}
