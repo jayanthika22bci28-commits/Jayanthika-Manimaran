@@ -1,0 +1,48 @@
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+
+bool isValid(char* s) {
+    int length = strlen(s);
+    
+    // Allocate a char stack matching the maximum possible depth of the string
+    char* stack = (char*)malloc(length * sizeof(char));
+    int top = -1;
+
+    for (int i = 0; i < length; i++) {
+        char current = s[i];
+
+        // If it's an opening bracket, push it onto the stack
+        if (current == '(' || current == '{' || current == '[') {
+            stack[++top] = current;
+        } 
+        // If it's a closing bracket, validate it against the top of the stack
+        else {
+            // Stack is empty means there is no matching open bracket
+            if (top == -1) {
+                free(stack);
+                return false;
+            }
+
+            char top_element = stack[top];
+
+            // Check if the current closing bracket matches the top element
+            if ((current == ')' && top_element == '(') ||
+                (current == '}' && top_element == '{') ||
+                (current == ']' && top_element == '[')) {
+                top--; // Match found, pop it from the stack
+            } else {
+                free(stack);
+                return false; // Mismatched bracket type or incorrect nesting order
+            }
+        }
+    }
+
+    // If top is -1, all open brackets were closed correctly
+    bool result = (top == -1);
+    
+    // Free the dynamically allocated stack array to avoid memory leaks
+    free(stack);
+    
+    return result;
+}
