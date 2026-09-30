@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_CALLS 10000
+
+typedef struct {
+    int* requests; // Array to act as our queue
+    int front;     // Pointer to the front of the queue
+    int rear;      // Pointer to the back of the queue
+} RecentCounter;
+
+/** Initializes the counter data structure */
+RecentCounter* recentCounterCreate() {
+    RecentCounter* obj = (RecentCounter*)malloc(sizeof(RecentCounter));
+    // Up to 10^4 calls will be made according to constraints
+    obj->requests = (int*)malloc(MAX_CALLS * sizeof(int));
+    obj->front = 0;
+    obj->rear = 0;
+    return obj;
+}
+
+/** Adds a new request at time t and clears out expired requests */
+int recentCounterPing(RecentCounter* obj, int t) {
+    // 1. Add the current timestamp to the back of the queue
+    obj->requests[obj->rear++] = t;
+    
+    // 2. Remove all timestamps that are older than t - 3000
+    int min_valid_time = t - 3000;
+    while (obj->front < obj->rear && obj->requests[obj->front] < min_valid_time) {
+        obj->front++;
+    }
+    
+    // 3. The current size of the queue is the number of recent requests
+    return obj->rear - obj->front;
+}
+
+/** Deallocates memory used by the counter */
+void recentCounterFree(RecentCounter* obj) {
+    free(obj->requests);
+    free(obj);
+}
+
