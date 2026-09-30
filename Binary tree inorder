@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+// Helper function to perform recursive inorder traversal
+void traverse(struct TreeNode* root, int* result, int* returnSize) {
+    if (root == NULL) {
+        return;
+    }
+    
+    // 1. Visit left subtree
+    traverse(root->left, result, returnSize);
+    
+    // 2. Visit current node
+    result[(*returnSize)++] = root->val;
+    
+    // 3. Visit right subtree
+    traverse(root->right, result, returnSize);
+}
+
+int* inorderTraversal(struct TreeNode* root, int* returnSize) {
+    // Initialize the return size to 0
+    *returnSize = 0;
+    
+    // Max nodes constraint is 100, allocate memory accordingly
+    int* result = (int*)malloc(100 * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    // Start traversal
+    traverse(root, result, returnSize);
+    
+    return result;
+}
