@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+// Standard Stack Structure Definition
+typedef struct {
+    int data[100];
+    int top;
+} Stack;
+
+// Stack Helper Functions
+void stackPush(Stack* s, int x) {
+    s->data[++(s->top)] = x;
+}
+
+int stackPop(Stack* s) {
+    return s->data[(s->top)--];
+}
+
+int stackPeek(Stack* s) {
+    return s->data[s->top];
+}
+
+bool stackEmpty(Stack* s) {
+    return s->top == -1;
+}
+
+// Queue Structure Definition using two stacks
+typedef struct {
+    Stack* s1; // Input stack
+    Stack* s2; // Output stack
+} MyQueue;
+
+/** Initializes your data structure here. */
+MyQueue* myQueueCreate() {
+    MyQueue* queue = (MyQueue*)malloc(sizeof(MyQueue));
+    
+    queue->s1 = (Stack*)malloc(sizeof(Stack));
+    queue->s1->top = -1;
+    
+    queue->s2 = (Stack*)malloc(sizeof(Stack));
+    queue->s2->top = -1;
+    
+    return queue;
+}
+
+/** Pushes element x to the back of the queue. */
+void myQueuePush(MyQueue* obj, int x) {
+    stackPush(obj->s1, x);
+}
+
+/** Helper function to move elements from input stack to output stack if output stack is empty */
+void shiftStacks(MyQueue* obj) {
+    if (stackEmpty(obj->s2)) {
+        while (!stackEmpty(obj->s1)) {
+            stackPush(obj->s2, stackPop(obj->s1));
+        }
+    }
+}
+
+/** Removes the element from the front of the queue and returns it. */
+int myQueuePop(MyQueue* obj) {
+    shiftStacks(obj);
+    return stackPop(obj->s2);
+}
+
+/** Returns the element at the front of the queue. */
+int myQueuePeek(MyQueue* obj) {
+    shiftStacks(obj);
+    return stackPeek(obj->s2);
+}
+
+/** Returns whether the queue is empty. */
+bool myQueueEmpty(MyQueue* obj) {
+    return stackEmpty(obj->s1) && stackEmpty(obj->s2);
+}
+
+/** Deallocates memory used by the queue. */
+void myQueueFree(MyQueue* obj) {
+    free(obj->s1);
+    free(obj->s2);
+    free(obj);
+}
